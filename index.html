@@ -1,0 +1,328 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#12352b">
+<title>حساب‌یار دوکان</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f3f6f4;color:#182923;font-family:Tahoma,Arial;line-height:1.6}
+header{background:#12352b;color:white;padding:20px}
+.top{max-width:1100px;margin:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+h1{font-size:25px;margin:0}
+header p{margin:4px 0;color:#d8efe3;font-size:13px}
+nav{display:flex;gap:7px;overflow:auto;padding:10px;background:white;border-bottom:1px solid #dce6df}
+button{font:inherit;border:0;border-radius:9px;padding:10px 14px;cursor:pointer;background:#176b4d;color:white}
+nav button{background:#eef4ef;color:#234438;white-space:nowrap}
+nav button.active{background:#176b4d;color:white}
+main{max-width:1100px;margin:18px auto;padding:0 13px 40px}
+section{display:none}
+section.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:12px}
+.card{background:white;border:1px solid #dce6df;border-radius:14px;padding:16px;margin-bottom:14px}
+.metric small{color:#687970}
+.metric strong{display:block;font-size:22px;margin-top:7px;color:#176b4d}
+h2{font-size:19px;margin:0 0 12px}
+.formgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0 12px}
+label{font-size:13px;color:#687970;display:block;margin:8px 0 4px}
+input,select{width:100%;padding:11px;border:1px solid #cbd8ce;border-radius:9px;background:white;color:#17271f;font:inherit}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.secondary{background:#e9f1eb;color:#244535}
+.danger{background:#b42332}
+.muted{color:#687970;font-size:13px}
+.notice{background:#fff7df;border:1px solid #f1d58c;color:#684c0d;border-radius:10px;padding:12px;font-size:13px;margin-bottom:14px}
+.tablewrap{overflow:auto}
+table{border-collapse:collapse;width:100%;min-width:500px}
+th,td{text-align:right;padding:10px;border-bottom:1px solid #dce6df;font-size:13px}
+th{background:#f2f7f3;color:#40594c}
+.empty{text-align:center;color:#687970;padding:18px}
+.mini{padding:5px 8px;font-size:12px}
+@media(max-width:520px){h1{font-size:21px}.card{padding:13px}}
+@media print{header,nav,form,button,.no-print{display:none!important}body{background:white;color:black}.card{box-shadow:none}section{display:none!important}section.active{display:block!important}}
+</style>
+</head>
+<body>
+<header>
+<div class="top">
+<div><h1>🏪 حساب‌یار دوکان</h1><p>مدیریت خرید، فروش، گدام و حساب‌های دوکان</p></div>
+<strong>واحد پول: افغانی ؋</strong>
+</div>
+</header>
+
+<nav id="nav">
+<button class="active" data-tab="home">داشبورد</button>
+<button data-tab="goods">اجناس و گدام</button>
+<button data-tab="sell">فروش</button>
+<button data-tab="buy">خرید</button>
+<button data-tab="loans">قرض مشتریان</button>
+<button data-tab="costs">مصارف</button>
+<button data-tab="report">گزارش</button>
+<button data-tab="backup">پشتیبان</button>
+</nav>
+
+<main>
+<div class="notice">این نسخه اطلاعات را در مرورگر همین دستگاه ذخیره می‌کند، نه در دیتابیس آنلاین. مرتب پشتیبان بگیر.</div>
+
+<section id="home" class="active">
+<div class="grid" id="stats"></div>
+<div class="card"><h2>آخرین فروش‌ها</h2><div class="tablewrap"><table>
+<thead><tr><th>تاریخ</th><th>جنس</th><th>تعداد</th><th>مجموع</th><th>دریافتی</th></tr></thead>
+<tbody id="recentSales"></tbody>
+</table></div></div>
+<div class="card"><h2>اجناس کم‌موجود</h2><div class="tablewrap"><table>
+<thead><tr><th>جنس</th><th>موجودی</th><th>قیمت فروش</th></tr></thead>
+<tbody id="lowStock"></tbody>
+</table></div></div>
+</section>
+
+<section id="goods">
+<div class="card"><h2>ثبت جنس جدید</h2>
+<form id="goodsForm"><div class="formgrid">
+<div><label>نام جنس</label><input name="name" required maxlength="100"></div>
+<div><label>قیمت خرید فی عدد (؋)</label><input name="cost" type="number" min="0" step="0.01" required></div>
+<div><label>قیمت فروش فی عدد (؋)</label><input name="price" type="number" min="0" step="0.01" required></div>
+<div><label>تعداد ابتدایی</label><input name="qty" type="number" min="0" step="1" required></div>
+</div><div class="actions"><button>ثبت جنس</button></div></form>
+</div>
+<div class="card"><h2>فهرست اجناس</h2>
+<label>جستجوی جنس</label><input id="goodsSearch" placeholder="نام جنس را بنویس">
+<div class="tablewrap"><table><thead><tr><th>نام جنس</th><th>قیمت خرید</th><th>قیمت فروش</th><th>موجودی</th><th>عملیات</th></tr></thead><tbody id="goodsRows"></tbody></table></div>
+</div>
+</section>
+
+<section id="sell">
+<div class="card"><h2>ثبت فروش</h2>
+<form id="sellForm"><div class="formgrid">
+<div><label>جنس</label><select name="id" id="sellSelect" required></select></div>
+<div><label>تعداد فروش</label><input name="qty" type="number" min="1" step="1" required></div>
+<div><label>پول دریافت‌شده (؋)</label><input name="paid" type="number" min="0" step="0.01" required></div>
+<div><label>نام مشتری در صورت قرض</label><input name="customer" maxlength="100"></div>
+</div><p class="muted">اگر مبلغ کامل پرداخت نشود، نام مشتری الزامی است.</p><div class="actions"><button>ثبت فروش</button></div></form>
+</div>
+<div class="card"><h2>تاریخچه فروش</h2><div class="tablewrap"><table>
+<thead><tr><th>تاریخ</th><th>جنس</th><th>تعداد</th><th>مجموع</th><th>دریافتی</th><th>قرض</th><th>سود ناخالص</th></tr></thead><tbody id="salesRows"></tbody>
+</table></div></div>
+</section>
+
+<section id="buy">
+<div class="card"><h2>ثبت خرید جنس</h2>
+<form id="buyForm"><div class="formgrid">
+<div><label>جنس</label><select name="id" id="buySelect" required></select></div>
+<div><label>تعداد خرید</label><input name="qty" type="number" min="1" step="1" required></div>
+<div><label>قیمت خرید فی عدد (؋)</label><input name="cost" type="number" min="0" step="0.01" required></div>
+</div><div class="actions"><button>ثبت خرید</button></div></form>
+</div>
+<div class="card"><h2>تاریخچه خرید</h2><div class="tablewrap"><table>
+<thead><tr><th>تاریخ</th><th>جنس</th><th>تعداد</th><th>قیمت فی عدد</th><th>مجموع</th></tr></thead><tbody id="buyRows"></tbody>
+</table></div></div>
+</section>
+
+<section id="loans">
+<div class="card"><h2>دریافت پول قرضدار</h2>
+<form id="loanForm"><div class="formgrid">
+<div><label>مشتری</label><select name="customer" id="loanSelect" required></select></div>
+<div><label>مبلغ دریافت‌شده (؋)</label><input name="amount" type="number" min="0.01" step="0.01" required></div>
+</div><div class="actions"><button>ثبت دریافت</button></div></form>
+</div>
+<div class="card"><h2>حساب مشتریان</h2><div class="tablewrap"><table>
+<thead><tr><th>نام مشتری</th><th>قرض باقی‌مانده</th><th>عملیات</th></tr></thead><tbody id="loanRows"></tbody>
+</table></div></div>
+</section>
+
+<section id="costs">
+<div class="card"><h2>ثبت مصرف دوکان</h2>
+<form id="costForm"><div class="formgrid">
+<div><label>عنوان مصرف</label><input name="name" required maxlength="100" placeholder="کرایه، برق، ترانسپورت"></div>
+<div><label>مبلغ (؋)</label><input name="amount" type="number" min="0.01" step="0.01" required></div>
+</div><div class="actions"><button>ثبت مصرف</button></div></form>
+</div>
+<div class="card"><h2>فهرست مصارف</h2><div class="tablewrap"><table>
+<thead><tr><th>تاریخ</th><th>عنوان</th><th>مبلغ</th><th>عملیات</th></tr></thead><tbody id="costRows"></tbody>
+</table></div></div>
+</section>
+
+<section id="report">
+<div class="card"><h2>گزارش مالی عمومی</h2><div id="reportText"></div>
+<div class="actions"><button onclick="window.print()">چاپ گزارش</button></div></div>
+<div class="card"><h2>گزارش فروش بر اساس تاریخ</h2>
+<div class="formgrid"><div><label>از تاریخ</label><input id="dateFrom" type="date"></div><div><label>تا تاریخ</label><input id="dateTo" type="date"></div></div>
+<div class="actions"><button type="button" id="filterReport">نمایش گزارش</button><button class="secondary" type="button" id="clearFilter">نمایش همه</button></div>
+<div id="filteredReport"></div></div>
+</section>
+
+<section id="backup">
+<div class="card"><h2>پشتیبان و بازیابی</h2>
+<p>فایل پشتیبان را در جای امن نگه‌دار. بازیابی، حساب‌های فعلی را جایگزین می‌کند.</p>
+<div class="actions"><button id="backupBtn">دانلود پشتیبان</button><button class="secondary" id="restoreBtn">انتخاب فایل پشتیبان</button><input type="file" id="restoreFile" accept=".json,application/json" hidden></div>
+</div>
+<div class="card"><h2>پاک‌کردن اطلاعات</h2><p class="muted">این کار برگشت‌ناپذیر است؛ پیش از آن پشتیبان بگیر.</p><button class="danger" id="clearBtn">پاک‌کردن تمام حساب‌ها</button></div>
+</section>
+</main>
+
+<script>
+"use strict";
+const KEY="hesabyar_shop_v2";
+const emptyDB=()=>({goods:[],sales:[],buys:[],costs:[],payments:[]});
+let db;
+try{
+const raw=localStorage.getItem(KEY);
+db=raw?JSON.parse(raw):emptyDB();
+if(!["goods","sales","buys","costs","payments"].every(k=>Array.isArray(db[k])))throw Error();
+}catch(e){db=emptyDB();alert("اطلاعات ذخیره‌شده قابل خواندن نیست. اگر پشتیبان داری، بازیابی کن.");}
+const $=id=>document.getElementById(id);
+const money=n=>Number(n||0).toLocaleString("en-US",{maximumFractionDigits:2})+" ؋";
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+const today=()=>new Date().toISOString().slice(0,10);
+const showDate=d=>{try{return new Date(d+"T12:00:00").toLocaleDateString("fa-AF")}catch{return d}};
+const sum=(arr,key)=>arr.reduce((n,x)=>n+Number(x[key]||0),0);
+const product=id=>db.goods.find(g=>g.id===id);
+function persist(){
+try{localStorage.setItem(KEY,JSON.stringify(db));render();}
+catch(e){alert("ذخیره در مرورگر انجام نشد. حافظه دستگاه را بررسی کن و پشتیبان بگیر.");}
+}
+function rows(id,html){
+$(id).innerHTML=html||'<tr><td colspan="9" class="empty">هنوز معلومات ثبت نشده است.</td></tr>';
+}
+function debtList(){
+const m={};
+db.sales.forEach(s=>{if(s.customer)m[s.customer]=(m[s.customer]||0)+s.total-s.paid;});
+db.payments.forEach(p=>{m[p.customer]=(m[p.customer]||0)-p.amount;});
+return Object.entries(m).map(([customer,amount])=>({customer,amount:Math.max(0,amount)})).filter(x=>x.amount>0.001);
+}
+function totals(){
+const sales=sum(db.sales,"total");
+const received=sum(db.sales,"paid")+sum(db.payments,"amount");
+const gross=sum(db.sales,"profit");
+const costs=sum(db.costs,"amount");
+const stock=db.goods.reduce((n,g)=>n+g.qty*g.cost,0);
+const debt=debtList().reduce((n,d)=>n+d.amount,0);
+return {sales,received,gross,costs,profit:gross-costs,stock,debt};
+}
+function render(){
+const m=totals();
+const cards=[["فروش مجموع",money(m.sales)],["پول دریافت‌شده",money(m.received)],["سود ناخالص",money(m.gross)],["مصارف",money(m.costs)],["سود پس از مصارف",money(m.profit)],["قرض مشتریان",money(m.debt)],["ارزش خرید گدام",money(m.stock)],["تعداد انواع جنس",db.goods.length]];
+$("stats").innerHTML=cards.map(([a,b])=>`<div class="card metric"><small>${a}</small><strong>${b}</strong></div>`).join("");
+const search=$("goodsSearch").value.trim().toLowerCase();
+rows("goodsRows",db.goods.filter(g=>g.name.toLowerCase().includes(search)).map(g=>`<tr><td>${esc(g.name)}</td><td>${money(g.cost)}</td><td>${money(g.price)}</td><td>${g.qty}</td><td><button class="mini secondary" data-edit="${g.id}">ویرایش</button> <button class="mini danger" data-delgood="${g.id}">حذف</button></td></tr>`).join(""));
+const options=db.goods.map(g=>`<option value="${esc(g.id)}">${esc(g.name)} — موجودی ${g.qty}</option>`).join("")||'<option value="">اول جنس ثبت کن</option>';
+$("sellSelect").innerHTML=options;$("buySelect").innerHTML=options;
+rows("salesRows",db.sales.slice().reverse().map(s=>`<tr><td>${showDate(s.date)}</td><td>${esc(s.name)}</td><td>${s.qty}</td><td>${money(s.total)}</td><td>${money(s.paid)}</td><td>${money(s.total-s.paid)}</td><td>${money(s.profit)}</td></tr>`).join(""));
+rows("recentSales",db.sales.slice(-5).reverse().map(s=>`<tr><td>${showDate(s.date)}</td><td>${esc(s.name)}</td><td>${s.qty}</td><td>${money(s.total)}</td><td>${money(s.paid)}</td></tr>`).join(""));
+rows("lowStock",db.goods.filter(g=>g.qty<=5).map(g=>`<tr><td>${esc(g.name)}</td><td>${g.qty}</td><td>${money(g.price)}</td></tr>`).join(""));
+rows("buyRows",db.buys.slice().reverse().map(b=>`<tr><td>${showDate(b.date)}</td><td>${esc(b.name)}</td><td>${b.qty}</td><td>${money(b.cost)}</td><td>${money(b.total)}</td></tr>`).join(""));
+rows("costRows",db.costs.slice().reverse().map(c=>`<tr><td>${showDate(c.date)}</td><td>${esc(c.name)}</td><td>${money(c.amount)}</td><td><button class="mini danger" data-delcost="${c.id}">حذف</button></td></tr>`).join(""));
+const debts=debtList();
+$("loanSelect").innerHTML=debts.map(d=>`<option value="${esc(d.customer)}">${esc(d.customer)} — ${money(d.amount)}</option>`).join("")||'<option value="">قرضی موجود نیست</option>';
+rows("loanRows",debts.map(d=>`<tr><td>${esc(d.customer)}</td><td>${money(d.amount)}</td><td><button class="mini" data-repay="${esc(d.customer)}">دریافت قرض</button></td></tr>`).join(""));
+$("reportText").innerHTML=`<p>فروش مجموع: <b>${money(m.sales)}</b></p><p>دریافتی از فروش و قرض: <b>${money(m.received)}</b></p><p>سود ناخالص: <b>${money(m.gross)}</b></p><p>مصارف: <b>${money(m.costs)}</b></p><p>سود تخمینی پس از مصارف: <b>${money(m.profit)}</b></p><p>قرض باقی مشتریان: <b>${money(m.debt)}</b></p><p>ارزش گدام به قیمت خرید: <b>${money(m.stock)}</b></p>`;
+filteredReport();
+}
+function tab(id){
+document.querySelectorAll("section").forEach(s=>s.classList.toggle("active",s.id===id));
+document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+}
+$("nav").addEventListener("click",e=>{const b=e.target.closest("[data-tab]");if(b)tab(b.dataset.tab);});
+$("goodsSearch").addEventListener("input",render);
+
+$("goodsForm").addEventListener("submit",e=>{
+e.preventDefault();
+const f=new FormData(e.target),name=String(f.get("name")).trim(),cost=Number(f.get("cost")),price=Number(f.get("price")),qty=Number(f.get("qty"));
+if(!name||![cost,price,qty].every(Number.isFinite)||cost<0||price<0||qty<0||!Number.isInteger(qty))return alert("معلومات جنس درست نیست.");
+if(db.goods.some(g=>g.name.toLowerCase()===name.toLowerCase()))return alert("این جنس قبلاً ثبت شده است؛ از ویرایش استفاده کن.");
+db.goods.push({id:uid(),name,cost,price,qty});persist();e.target.reset();
+});
+
+$("goodsRows").addEventListener("click",e=>{
+const edit=e.target.closest("[data-edit]");
+if(edit){
+const g=product(edit.dataset.edit);if(!g)return;
+const name=prompt("نام جنس:",g.name);if(name===null)return;
+const cost=prompt("قیمت خرید:",g.cost);if(cost===null)return;
+const price=prompt("قیمت فروش:",g.price);if(price===null)return;
+const qty=prompt("موجودی فعلی:",g.qty);if(qty===null)return;
+const c=Number(cost),p=Number(price),q=Number(qty);
+if(!name.trim()||![c,p,q].every(Number.isFinite)||c<0||p<0||q<0||!Number.isInteger(q))return alert("معلومات نادرست است.");
+g.name=name.trim();g.cost=c;g.price=p;g.qty=q;persist();
+}
+const del=e.target.closest("[data-delgood]");
+if(del){const g=product(del.dataset.delgood);if(g&&confirm("جنس "+g.name+" حذف شود؟")){db.goods=db.goods.filter(x=>x.id!==g.id);persist();}}
+});
+
+$("sellForm").addEventListener("submit",e=>{
+e.preventDefault();
+const f=new FormData(e.target),g=product(f.get("id")),qty=Number(f.get("qty")),paid=Number(f.get("paid")),customer=String(f.get("customer")||"").trim();
+if(!g)return alert("جنس را انتخاب کن.");
+if(!Number.isInteger(qty)||qty<1||qty>g.qty)return alert("تعداد درست نیست یا موجودی کافی نیست.");
+const total=qty*g.price;
+if(!Number.isFinite(paid)||paid<0||paid>total)return alert("مبلغ دریافتی درست نیست.");
+if(paid<total&&!customer)return alert("برای فروش قرضی نام مشتری را بنویس.");
+g.qty-=qty;
+db.sales.push({id:uid(),date:today(),goodId:g.id,name:g.name,qty,total,paid,customer:paid<total?customer:"",profit:(g.price-g.cost)*qty});
+persist();e.target.reset();
+});
+
+$("buyForm").addEventListener("submit",e=>{
+e.preventDefault();
+const f=new FormData(e.target),g=product(f.get("id")),qty=Number(f.get("qty")),cost=Number(f.get("cost"));
+if(!g||!Number.isInteger(qty)||qty<1||!Number.isFinite(cost)||cost<0)return alert("معلومات خرید درست نیست.");
+g.qty+=qty;g.cost=cost;
+db.buys.push({id:uid(),date:today(),goodId:g.id,name:g.name,qty,cost,total:qty*cost});
+persist();e.target.reset();
+});
+
+$("costForm").addEventListener("submit",e=>{
+e.preventDefault();
+const f=new FormData(e.target),name=String(f.get("name")).trim(),amount=Number(f.get("amount"));
+if(!name||!Number.isFinite(amount)||amount<=0)return alert("عنوان یا مبلغ مصرف درست نیست.");
+db.costs.push({id:uid(),date:today(),name,amount});persist();e.target.reset();
+});
+$("costRows").addEventListener("click",e=>{
+const b=e.target.closest("[data-delcost]");if(!b)return;
+if(confirm("این مصرف حذف شود؟")){db.costs=db.costs.filter(c=>c.id!==b.dataset.delcost);persist();}
+});
+
+$("loanForm").addEventListener("submit",e=>{
+e.preventDefault();
+const f=new FormData(e.target),customer=String(f.get("customer")||""),amount=Number(f.get("amount")),d=debtList().find(x=>x.customer===customer);
+if(!d||!Number.isFinite(amount)||amount<=0||amount>d.amount+0.001)return alert("مبلغ دریافت قرض درست نیست.");
+db.payments.push({id:uid(),date:today(),customer,amount});persist();e.target.reset();
+});
+$("loanRows").addEventListener("click",e=>{
+const b=e.target.closest("[data-repay]");if(!b)return;
+tab("loans");$("loanSelect").value=b.dataset.repay;$("loanForm").scrollIntoView({behavior:"smooth",block:"center"});
+});
+
+function filteredReport(){
+const from=$("dateFrom").value,to=$("dateTo").value;
+const sales=db.sales.filter(s=>(!from||s.date>=from)&&(!to||s.date<=to));
+$("filteredReport").innerHTML=`<p>تعداد فروش‌ها: <b>${sales.length}</b></p><p>مجموع فروش: <b>${money(sum(sales,"total"))}</b></p><p>مجموع دریافتی: <b>${money(sum(sales,"paid"))}</b></p><p>سود ناخالص: <b>${money(sum(sales,"profit"))}</b></p><div class="tablewrap"><table><thead><tr><th>تاریخ</th><th>جنس</th><th>مجموع</th><th>دریافتی</th></tr></thead><tbody>${sales.map(s=>`<tr><td>${showDate(s.date)}</td><td>${esc(s.name)}</td><td>${money(s.total)}</td><td>${money(s.paid)}</td></tr>`).join("")||'<tr><td colspan="4" class="empty">فروشی در این بازه نیست.</td></tr>'}</tbody></table></div>`;
+}
+$("filterReport").addEventListener("click",filteredReport);
+$("clearFilter").addEventListener("click",()=>{$("dateFrom").value="";$("dateTo").value="";filteredReport();});
+
+$("backupBtn").addEventListener("click",()=>{
+const blob=new Blob([JSON.stringify({app:"hesabyar",version:2,exportedAt:new Date().toISOString(),data:db},null,2)],{type:"application/json"});
+const url=URL.createObjectURL(blob),a=document.createElement("a");
+a.href=url;a.download="hesabyar-backup-"+today()+".json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+});
+$("restoreBtn").addEventListener("click",()=>$("restoreFile").click());
+$("restoreFile").addEventListener("change",async e=>{
+const file=e.target.files[0];if(!file)return;
+try{
+const parsed=JSON.parse(await file.text()),data=parsed.data||parsed;
+if(!["goods","sales","buys","costs","payments"].every(k=>Array.isArray(data[k])))throw Error();
+if(!confirm("اطلاعات فعلی با نسخه پشتیبان جایگزین شود؟"))return;
+db=data;persist();alert("پشتیبان بازیابی شد.");
+}catch(err){alert("فایل پشتیبان معتبر نیست.");}
+finally{e.target.value="";}
+});
+$("clearBtn").addEventListener("click",()=>{
+if(confirm("تمام حساب‌ها پاک شوند؟")&&confirm("برای تایید نهایی، همه اطلاعات پاک شود؟")){db=emptyDB();persist();}
+});
+render();
+</script>
+</body>
+</html>
