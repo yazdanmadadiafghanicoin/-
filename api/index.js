@@ -209,7 +209,17 @@ function validData(d) {
 }
 
 module.exports = async (req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const allowedOrigins = new Set([
+  'https://yazdanmadadiafghanicoin.github.io'
+]);
+
+const origin = req.headers.origin;
+
+if (origin && allowedOrigins.has(origin)) {
+  res.setHeader('Access-Control-Allow-Origin', origin);
+}
+
+res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   res.setHeader('Vary', 'Origin');
